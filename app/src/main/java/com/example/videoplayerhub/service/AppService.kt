@@ -5,7 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface AppService {
-    @GET("v2/list?page={n}&limit={m}")
+    @GET("v2/list")
     suspend fun getList(
         @Query("page") page: Int,
         @Query("limit") limit: Int
