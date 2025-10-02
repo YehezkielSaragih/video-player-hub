@@ -1,4 +1,6 @@
 package com.example.videoplayerhub.ui.activity
 
-class LoginActivity {
+import androidx.activity.ComponentActivity
+
+class LoginActivity : ComponentActivity() {
 }

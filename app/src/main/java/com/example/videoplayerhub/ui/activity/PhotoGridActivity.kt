@@ -1,4 +1,6 @@
 package com.example.videoplayerhub.ui.activity
 
-class PhotoGridActivity {
+import androidx.activity.ComponentActivity
+
+class PhotoGridActivity : ComponentActivity() {
 }

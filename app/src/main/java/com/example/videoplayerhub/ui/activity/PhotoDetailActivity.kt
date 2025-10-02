@@ -1,4 +1,6 @@
 package com.example.videoplayerhub.ui.activity
 
-class PhotoDetailActivity {
+import androidx.activity.ComponentActivity
+
+class PhotoDetailActivity : ComponentActivity() {
 }

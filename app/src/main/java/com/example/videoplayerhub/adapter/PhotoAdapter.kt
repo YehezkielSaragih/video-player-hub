@@ -30,8 +30,15 @@ class PhotoAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val photo = items[position]
-        Glide.with(holder.itemView).load("https://picsum.photos/id/${photo.id}/200/200").into(holder.img)
+
+        // Load thumbnail 200x200
+        Glide.with(holder.itemView)
+            .load("https://picsum.photos/id/${photo.id}/200/200")
+            .placeholder(android.R.color.darker_gray)
+            .into(holder.img)
+
         holder.tvAuthor.text = photo.author
+
         holder.itemView.setOnClickListener { onClick(photo) }
     }
 }

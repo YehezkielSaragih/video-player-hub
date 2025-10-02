@@ -1,4 +1,6 @@
 package com.example.videoplayerhub.ui.activity
 
-class FavoriteActivity {
+import androidx.activity.ComponentActivity
+
+class FavoriteActivity : ComponentActivity() {
 }
