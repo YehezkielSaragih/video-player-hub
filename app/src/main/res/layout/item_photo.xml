@@ -18,7 +18,7 @@
         android:id="@+id/tvAuthor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/photo"
+        android:text="@string/author_placeholder"
         android:textSize="12sp"
         android:paddingTop="4dp"
         android:ellipsize="end"

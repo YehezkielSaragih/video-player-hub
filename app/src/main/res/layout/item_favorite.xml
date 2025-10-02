@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="6dp"
-    card_view:cardCornerRadius="12dp"
-    card_view:cardElevation="4dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Thumbnail -->
+        <!-- Thumbnail image of the favorite photo -->
         <ImageView
             android:id="@+id/imgFavThumb"
             android:layout_width="match_parent"
@@ -21,7 +21,7 @@
             android:contentDescription="@string/photo"
             android:background="@android:color/darker_gray" />
 
-        <!-- Tombol hapus favorit (overlay pojok kanan atas) -->
+        <!-- Delete button overlay in the top-right corner -->
         <ImageButton
             android:id="@+id/btnRemoveFav"
             android:layout_width="36dp"
@@ -31,17 +31,17 @@
             android:layout_margin="8dp"
             android:background="@android:color/transparent"
             android:src="@android:drawable/ic_delete"
-            android:contentDescription="@string/delete"
-            android:tint="@android:color/holo_red_dark" />
+            android:contentDescription="@string/img_btn_delete"
+            app:tint="@android:color/holo_red_dark" />
 
-        <!-- Nama Author -->
+        <!-- Author name below the thumbnail -->
         <TextView
             android:id="@+id/tvFavAuthor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/imgFavThumb"
             android:padding="8dp"
-            android:text="Author"
+            android:text="@string/author_placeholder"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
