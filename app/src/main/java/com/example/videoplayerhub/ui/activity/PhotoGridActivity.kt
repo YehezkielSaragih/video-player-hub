@@ -1,5 +1,6 @@
 package com.example.videoplayerhub.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -37,7 +38,14 @@ class PhotoGridActivity : ComponentActivity() {
         tvEmptyState = findViewById(R.id.tvEmptyState)
 
         adapter = PhotoAdapter(photos) { photo ->
-            // Klik item → bisa buka detail page
+            val intent = Intent(this, PhotoDetailActivity::class.java)
+            intent.putExtra("PHOTO_ID", photo.id)
+            intent.putExtra("PHOTO_AUTHOR", photo.author)
+            intent.putExtra("PHOTO_WIDTH", photo.width)
+            intent.putExtra("PHOTO_HEIGHT", photo.height)
+            intent.putExtra("PHOTO_URL", photo.url)
+            intent.putExtra("PHOTO_DOWNLOAD_URL", photo.downloadUrl)
+            startActivity(intent)
         }
 
         // Set grid column
