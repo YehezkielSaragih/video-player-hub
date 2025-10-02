@@ -1,4 +1,3 @@
 package com.example.videoplayerhub.dto
 
-class LoginResponse {
-}
+data class LoginResponse(val token: String)
