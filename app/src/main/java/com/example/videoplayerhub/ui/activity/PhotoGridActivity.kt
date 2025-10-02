@@ -20,7 +20,6 @@ class PhotoGridActivity : ComponentActivity() {
 
     private lateinit var rvPhotos: RecyclerView
     private lateinit var swipeRefresh: SwipeRefreshLayout
-    private lateinit var btnLoadMore: Button
     private lateinit var btnViewFavorites: Button
     private lateinit var tvEmptyState: TextView
     private lateinit var adapter: PhotoAdapter
@@ -28,6 +27,7 @@ class PhotoGridActivity : ComponentActivity() {
     private val photos = mutableListOf<PicsumPhoto>()
     private var currentPage = 1
     private val limit = 30
+    private var isLoading = false   // Flag untuk mencegah load ganda
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +35,6 @@ class PhotoGridActivity : ComponentActivity() {
 
         rvPhotos = findViewById(R.id.rvPhotos)
         swipeRefresh = findViewById(R.id.swipeRefresh)
-        btnLoadMore = findViewById(R.id.btnLoadMore)
         btnViewFavorites = findViewById(R.id.btnViewFavorites)
         tvEmptyState = findViewById(R.id.tvEmptyState)
 
@@ -45,26 +44,33 @@ class PhotoGridActivity : ComponentActivity() {
             intent.putExtra("PHOTO_AUTHOR", photo.author)
             intent.putExtra("PHOTO_WIDTH", photo.width)
             intent.putExtra("PHOTO_HEIGHT", photo.height)
-            intent.putExtra("PHOTO_URL", photo.url)
             intent.putExtra("PHOTO_DOWNLOAD_URL", photo.downloadUrl)
             startActivity(intent)
         }
 
-        // Set grid column
-        val spanCount = 3
-        rvPhotos.layoutManager = GridLayoutManager(this, spanCount)
+        rvPhotos.layoutManager = GridLayoutManager(this, 3)
         rvPhotos.adapter = adapter
 
         swipeRefresh.setOnRefreshListener { refreshPhotos() }
-
-        btnLoadMore.setOnClickListener { loadMorePhotos() }
-
         btnViewFavorites.setOnClickListener {
-            val intent = Intent(this, FavoriteActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, FavoriteActivity::class.java))
         }
 
-        // Load initial data
+        // Infinite scroll listener
+        rvPhotos.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as GridLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
+                    loadMorePhotos()
+                }
+            }
+        })
+
         swipeRefresh.isRefreshing = true
         rvPhotos.post { loadPhotos(currentPage) }
     }
@@ -82,6 +88,7 @@ class PhotoGridActivity : ComponentActivity() {
     }
 
     private fun loadPhotos(page: Int) {
+        isLoading = true
         swipeRefresh.isRefreshing = true
         tvEmptyState.visibility = View.GONE
 
@@ -89,15 +96,18 @@ class PhotoGridActivity : ComponentActivity() {
             try {
                 val newPhotos = Client.appApi.getList(page, limit)
                 swipeRefresh.isRefreshing = false
+                isLoading = false
 
                 if (newPhotos.isEmpty() && photos.isEmpty()) {
                     tvEmptyState.visibility = View.VISIBLE
                 } else {
+                    val startPos = photos.size
                     photos.addAll(newPhotos)
-                    adapter.notifyItemRangeInserted(photos.size - newPhotos.size, newPhotos.size)
+                    adapter.notifyItemRangeInserted(startPos, newPhotos.size)
                 }
             } catch (e: Exception) {
                 swipeRefresh.isRefreshing = false
+                isLoading = false
                 if (photos.isEmpty()) {
                     tvEmptyState.text = getString(R.string.empty_state)
                     tvEmptyState.visibility = View.VISIBLE

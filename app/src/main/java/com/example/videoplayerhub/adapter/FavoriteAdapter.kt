@@ -13,7 +13,8 @@ import com.example.videoplayerhub.model.FavoritePhoto
 
 class FavoriteAdapter(
     private val items: MutableList<FavoritePhoto>,
-    private val onRemove: (FavoritePhoto) -> Unit
+    private val onRemove: (FavoritePhoto) -> Unit,
+    private val onItemClick: (FavoritePhoto) -> Unit
 ) : RecyclerView.Adapter<FavoriteAdapter.VH>() {
 
     class VH(view: View) : RecyclerView.ViewHolder(view) {
@@ -38,6 +39,7 @@ class FavoriteAdapter(
 
         holder.tvAuthor.text = fav.author
         holder.btnRemove.setOnClickListener { onRemove(fav) }
+        holder.itemView.setOnClickListener { onItemClick(fav) }
     }
 
     fun setData(newList: List<FavoritePhoto>) {

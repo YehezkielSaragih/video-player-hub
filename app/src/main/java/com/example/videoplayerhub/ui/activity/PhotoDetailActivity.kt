@@ -49,21 +49,24 @@ class PhotoDetailActivity : ComponentActivity() {
         btnBack = findViewById(R.id.btnBack)
         btnAddFav = findViewById(R.id.btnAddFav)
 
-        // Initialize Room database
+        // Init Room DB
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
             "videoplayerhub_db"
         ).build()
 
-        // Receive data from Intent
+        // ✅ Ambil data dari Intent
         photoId = intent.getStringExtra("PHOTO_ID") ?: ""
-        photoAuthor = intent.getStringExtra("PHOTO_AUTHOR") ?: "Unknown"
+        photoAuthor = intent.getStringExtra("PHOTO_AUTHOR") ?: ""
         photoWidth = intent.getIntExtra("PHOTO_WIDTH", 0)
         photoHeight = intent.getIntExtra("PHOTO_HEIGHT", 0)
         photoDownloadUrl = intent.getStringExtra("PHOTO_DOWNLOAD_URL") ?: ""
 
         bindPhoto(photoAuthor, photoWidth, photoHeight, photoDownloadUrl)
+
+        // Cek apakah foto sudah ada di favorit
+        checkIfFavorite()
 
         // Pinch zoom
         scaleDetector = ScaleGestureDetector(this, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -77,8 +80,6 @@ class PhotoDetailActivity : ComponentActivity() {
         })
 
         btnBack.setOnClickListener { onBackPressed() }
-
-        // Add to favorite
         btnAddFav.setOnClickListener { addToFavorites() }
     }
 
@@ -96,6 +97,19 @@ class PhotoDetailActivity : ComponentActivity() {
 
         tvAuthor.text = getString(R.string.author, author)
         tvSize.text = getString(R.string.photo_size, width, height)
+    }
+
+    private fun checkIfFavorite() {
+        lifecycleScope.launch {
+            val existing = db.favoritePhotoDao().getById(photoId)
+            if (existing != null) {
+                btnAddFav.isEnabled = false
+                btnAddFav.text = "Already in Favorites"
+            } else {
+                btnAddFav.isEnabled = true
+                btnAddFav.text = "Add to Favorites"
+            }
+        }
     }
 
     private fun addToFavorites() {
@@ -117,6 +131,10 @@ class PhotoDetailActivity : ComponentActivity() {
 
                 db.favoritePhotoDao().insert(favorite)
                 Toast.makeText(this@PhotoDetailActivity, "Added to favorites", Toast.LENGTH_SHORT).show()
+
+                // Update UI → disable button
+                btnAddFav.isEnabled = false
+                btnAddFav.text = "Already in Favorites"
             } catch (e: Exception) {
                 e.printStackTrace()
                 Toast.makeText(this@PhotoDetailActivity, "Failed to add favorite", Toast.LENGTH_SHORT).show()

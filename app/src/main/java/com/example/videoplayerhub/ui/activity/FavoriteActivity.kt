@@ -1,5 +1,6 @@
 package com.example.videoplayerhub.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -21,7 +22,6 @@ class FavoriteActivity : ComponentActivity() {
     private lateinit var tvEmptyFav: TextView
     private lateinit var btnBack: Button
     private lateinit var adapter: FavoriteAdapter
-
     private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,16 +32,17 @@ class FavoriteActivity : ComponentActivity() {
         tvEmptyFav = findViewById(R.id.tvEmptyFav)
         btnBack = findViewById(R.id.btnBack)
 
-        adapter = FavoriteAdapter(mutableListOf()) { fav ->
-            removeFromFavorites(fav)
-        }
+        adapter = FavoriteAdapter(
+            mutableListOf(),
+            onRemove = { fav -> removeFromFavorites(fav) },
+            onItemClick = { fav -> openDetail(fav) }
+        )
 
         rvFavorites.layoutManager = LinearLayoutManager(this)
         rvFavorites.adapter = adapter
 
         btnBack.setOnClickListener { finish() }
 
-        // Initialize Room
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
@@ -64,6 +65,16 @@ class FavoriteActivity : ComponentActivity() {
         lifecycleScope.launch {
             db.favoritePhotoDao().delete(fav)
         }
+    }
+
+    private fun openDetail(fav: FavoritePhoto) {
+        val intent = Intent(this, PhotoDetailActivity::class.java)
+        intent.putExtra("PHOTO_ID", fav.id)
+        intent.putExtra("PHOTO_AUTHOR", fav.author)
+        intent.putExtra("PHOTO_WIDTH", fav.width)
+        intent.putExtra("PHOTO_HEIGHT", fav.height)
+        intent.putExtra("PHOTO_DOWNLOAD_URL", fav.downloadUrl)
+        startActivity(intent)
     }
 
     private fun showEmptyState(isEmpty: Boolean) {
