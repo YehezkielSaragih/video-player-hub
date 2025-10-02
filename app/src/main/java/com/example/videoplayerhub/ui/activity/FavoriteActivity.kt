@@ -4,11 +4,16 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.example.videoplayerhub.R
 import com.example.videoplayerhub.adapter.FavoriteAdapter
+import com.example.videoplayerhub.config.AppDatabase
 import com.example.videoplayerhub.model.FavoritePhoto
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class FavoriteActivity : ComponentActivity() {
 
@@ -17,8 +22,7 @@ class FavoriteActivity : ComponentActivity() {
     private lateinit var btnBack: Button
     private lateinit var adapter: FavoriteAdapter
 
-    // sementara dummy data (ganti dengan Room/DB)
-    private val favoriteList = mutableListOf<FavoritePhoto>()
+    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,24 +41,29 @@ class FavoriteActivity : ComponentActivity() {
 
         btnBack.setOnClickListener { finish() }
 
-        loadFavorites()
+        // Initialize Room
+        db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "videoplayerhub_db"
+        ).build()
+
+        loadFavoritesFromDb()
     }
 
-    private fun loadFavorites() {
-        // TODO: Ambil dari Room. Untuk sekarang dummy
-        if (favoriteList.isEmpty()) {
-            showEmptyState(true)
-        } else {
-            adapter.setData(favoriteList)
-            showEmptyState(false)
+    private fun loadFavoritesFromDb() {
+        lifecycleScope.launch {
+            db.favoritePhotoDao().getAllFavoritesFlow().collectLatest { list ->
+                adapter.setData(list)
+                showEmptyState(list.isEmpty())
+            }
         }
     }
 
     private fun removeFromFavorites(fav: FavoritePhoto) {
-        // TODO: hapus dari Room juga
-        favoriteList.remove(fav)
-        adapter.setData(favoriteList)
-        showEmptyState(favoriteList.isEmpty())
+        lifecycleScope.launch {
+            db.favoritePhotoDao().delete(fav)
+        }
     }
 
     private fun showEmptyState(isEmpty: Boolean) {

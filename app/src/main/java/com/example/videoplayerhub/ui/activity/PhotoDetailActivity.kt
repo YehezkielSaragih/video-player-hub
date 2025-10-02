@@ -7,9 +7,15 @@ import android.view.ScaleGestureDetector
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.lifecycleScope
+import androidx.room.Room
 import com.bumptech.glide.Glide
 import com.example.videoplayerhub.R
+import com.example.videoplayerhub.model.FavoritePhoto
+import com.example.videoplayerhub.config.AppDatabase
+import kotlinx.coroutines.launch
 
 class PhotoDetailActivity : ComponentActivity() {
 
@@ -23,6 +29,16 @@ class PhotoDetailActivity : ComponentActivity() {
     private var scaleFactor = 1f
     private val matrix = Matrix()
 
+    // Room database
+    private lateinit var db: AppDatabase
+
+    // Photo data
+    private lateinit var photoId: String
+    private lateinit var photoAuthor: String
+    private var photoWidth = 0
+    private var photoHeight = 0
+    private lateinit var photoDownloadUrl: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photodetail)
@@ -33,15 +49,21 @@ class PhotoDetailActivity : ComponentActivity() {
         btnBack = findViewById(R.id.btnBack)
         btnAddFav = findViewById(R.id.btnAddFav)
 
-        // Terima data dari Intent
-        val id = intent.getStringExtra("PHOTO_ID") ?: ""
-        val author = intent.getStringExtra("PHOTO_AUTHOR") ?: "Unknown"
-        val width = intent.getIntExtra("PHOTO_WIDTH", 0)
-        val height = intent.getIntExtra("PHOTO_HEIGHT", 0)
-        val url = intent.getStringExtra("PHOTO_URL") ?: ""
-        val downloadUrl = intent.getStringExtra("PHOTO_DOWNLOAD_URL") ?: ""
+        // Initialize Room database
+        db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "videoplayerhub_db"
+        ).build()
 
-        bindPhoto(author, width, height, downloadUrl)
+        // Receive data from Intent
+        photoId = intent.getStringExtra("PHOTO_ID") ?: ""
+        photoAuthor = intent.getStringExtra("PHOTO_AUTHOR") ?: "Unknown"
+        photoWidth = intent.getIntExtra("PHOTO_WIDTH", 0)
+        photoHeight = intent.getIntExtra("PHOTO_HEIGHT", 0)
+        photoDownloadUrl = intent.getStringExtra("PHOTO_DOWNLOAD_URL") ?: ""
+
+        bindPhoto(photoAuthor, photoWidth, photoHeight, photoDownloadUrl)
 
         // Pinch zoom
         scaleDetector = ScaleGestureDetector(this, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -55,9 +77,9 @@ class PhotoDetailActivity : ComponentActivity() {
         })
 
         btnBack.setOnClickListener { onBackPressed() }
-        btnAddFav.setOnClickListener {
-            // TODO: add to favorite logic
-        }
+
+        // Add to favorite
+        btnAddFav.setOnClickListener { addToFavorites() }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -74,5 +96,31 @@ class PhotoDetailActivity : ComponentActivity() {
 
         tvAuthor.text = getString(R.string.author, author)
         tvSize.text = getString(R.string.photo_size, width, height)
+    }
+
+    private fun addToFavorites() {
+        lifecycleScope.launch {
+            try {
+                val existing = db.favoritePhotoDao().getById(photoId)
+                if (existing != null) {
+                    Toast.makeText(this@PhotoDetailActivity, "Already in favorites", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                val favorite = FavoritePhoto(
+                    id = photoId,
+                    author = photoAuthor,
+                    downloadUrl = photoDownloadUrl,
+                    width = photoWidth,
+                    height = photoHeight
+                )
+
+                db.favoritePhotoDao().insert(favorite)
+                Toast.makeText(this@PhotoDetailActivity, "Added to favorites", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(this@PhotoDetailActivity, "Failed to add favorite", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

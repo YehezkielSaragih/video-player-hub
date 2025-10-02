@@ -5,9 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "favorites")
 data class FavoritePhoto(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey val id: String,
     val author: String,
     val downloadUrl: String,
     val width: Int,
-    val height: Int,
+    val height: Int
 )
