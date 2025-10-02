@@ -6,5 +6,5 @@ data class PicsumPhoto(
     val width: Int,
     val height: Int,
     val url: String,
-    val download_url: String
+    val downloadUrl: String
 )

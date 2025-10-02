@@ -18,8 +18,7 @@ object Client {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
-    // Interceptor untuk menambahkan header otomatis
-    private val headerInterceptor = Interceptor { chain ->
+    private val authHeaderInterceptor = Interceptor { chain ->
         val request: Request = chain.request().newBuilder()
             .addHeader("x-api-key", "reqres-free-v1")
             .addHeader("Content-Type", "application/json")
@@ -27,16 +26,21 @@ object Client {
         chain.proceed(request)
     }
 
-    private val client = OkHttpClient.Builder()
+    private val authClient = OkHttpClient.Builder()
         .addInterceptor(logger)
-        .addInterceptor(headerInterceptor)
+        .addInterceptor(authHeaderInterceptor)
         .build()
+
+    private val appClient = OkHttpClient.Builder()
+        .addInterceptor(logger)
+        .build()
+
 
     // Auth API
     val authApi: AuthService by lazy {
         Retrofit.Builder()
             .baseUrl(AUTH_URL)
-            .client(client)
+            .client(authClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(AuthService::class.java)
@@ -46,7 +50,7 @@ object Client {
     val appApi: AppService by lazy {
         Retrofit.Builder()
             .baseUrl(APP_URL)
-            .client(client)
+            .client(appClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(AppService::class.java)
