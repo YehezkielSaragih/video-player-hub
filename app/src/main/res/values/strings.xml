@@ -6,4 +6,8 @@
     <string name="btn_load_more">Load More</string>
     <string name="empty_state">No photos available</string>
     <string name="photo">Photo</string>
+    <string name="author">Author: %s</string>
+    <string name="photo_size">Size: %d × %d</string>
+    <string name="btn_back">Back</string>
+    <string name="btn_add_fav">Add to Favorite</string>
 </resources>
