@@ -65,7 +65,8 @@ class PhotoGridActivity : ComponentActivity() {
         }
 
         // Load initial data
-        loadPhotos(currentPage)
+        swipeRefresh.isRefreshing = true
+        rvPhotos.post { loadPhotos(currentPage) }
     }
 
     private fun refreshPhotos() {
