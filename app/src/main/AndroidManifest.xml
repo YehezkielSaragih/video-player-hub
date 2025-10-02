@@ -16,7 +16,7 @@
         android:theme="@style/Theme.VideoPlayerHub">
 
         <activity
-            android:name=".ui.activity.LoginActivity"
+            android:name=".ui.activity.PhotoGridActivity"
             android:exported="true"
             android:theme="@style/Theme.VideoPlayerHub">
             <intent-filter>
@@ -26,7 +26,7 @@
         </activity>
 
         <activity
-            android:name=".ui.activity.PhotoGridActivity"
+            android:name=".ui.activity.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.VideoPlayerHub" />
 
