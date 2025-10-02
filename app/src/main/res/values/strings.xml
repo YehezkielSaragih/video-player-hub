@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">VideoPlayerHub</string>
+    <string name="hint_email">eve.holt@reqres.in</string>
+    <string name="hint_password">cityslicka</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_load_more">Load More</string>
+    <string name="empty_state">No photos available</string>
+    <string name="photo">Photo</string>
 </resources>
