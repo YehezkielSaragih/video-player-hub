@@ -21,6 +21,7 @@ class PhotoGridActivity : ComponentActivity() {
     private lateinit var rvPhotos: RecyclerView
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private lateinit var btnLoadMore: Button
+    private lateinit var btnViewFavorites: Button
     private lateinit var tvEmptyState: TextView
     private lateinit var adapter: PhotoAdapter
 
@@ -35,6 +36,7 @@ class PhotoGridActivity : ComponentActivity() {
         rvPhotos = findViewById(R.id.rvPhotos)
         swipeRefresh = findViewById(R.id.swipeRefresh)
         btnLoadMore = findViewById(R.id.btnLoadMore)
+        btnViewFavorites = findViewById(R.id.btnViewFavorites)
         tvEmptyState = findViewById(R.id.tvEmptyState)
 
         adapter = PhotoAdapter(photos) { photo ->
@@ -53,12 +55,13 @@ class PhotoGridActivity : ComponentActivity() {
         rvPhotos.layoutManager = GridLayoutManager(this, spanCount)
         rvPhotos.adapter = adapter
 
-        swipeRefresh.setOnRefreshListener {
-            refreshPhotos()
-        }
+        swipeRefresh.setOnRefreshListener { refreshPhotos() }
 
-        btnLoadMore.setOnClickListener {
-            loadMorePhotos()
+        btnLoadMore.setOnClickListener { loadMorePhotos() }
+
+        btnViewFavorites.setOnClickListener {
+            val intent = Intent(this, FavoriteActivity::class.java)
+            startActivity(intent)
         }
 
         // Load initial data

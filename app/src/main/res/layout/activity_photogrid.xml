@@ -33,6 +33,14 @@
         android:text="@string/btn_load_more"
         android:layout_marginTop="8dp"/>
 
+    <!-- View Favorites button -->
+    <Button
+        android:id="@+id/btnViewFavorites"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_view_favorites"
+        android:layout_marginTop="8dp"/>
+
     <!-- Empty / error state -->
     <TextView
         android:id="@+id/tvEmptyState"
@@ -42,5 +50,5 @@
         android:textAlignment="center"
         android:visibility="gone"
         android:layout_marginTop="16dp"/>
-    
+
 </LinearLayout>
