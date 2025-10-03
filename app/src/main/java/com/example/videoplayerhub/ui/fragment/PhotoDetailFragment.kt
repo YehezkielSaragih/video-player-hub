@@ -1,8 +1,12 @@
-package com.example.videoplayerhub.ui.activity
+package com.example.videoplayerhub.ui.fragment
 
 import android.graphics.Matrix
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -77,7 +81,8 @@ class PhotoDetailFragment : Fragment() {
         checkIfFavorite()
 
         // Pinch zoom
-        scaleDetector = ScaleGestureDetector(requireContext(),
+        scaleDetector = ScaleGestureDetector(
+            requireContext(),
             object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
                 override fun onScale(detector: ScaleGestureDetector): Boolean {
                     scaleFactor *= detector.scaleFactor
@@ -141,7 +146,7 @@ class PhotoDetailFragment : Fragment() {
                 btnAddFav.text = getString(R.string.already_in_favorites)
             } else {
                 btnAddFav.isEnabled = true
-                btnAddFav.text = getString(R.string.btn_add_fav)
+                btnAddFav.text = getString(R.string.add_to_favorites)
             }
         }
     }
@@ -151,7 +156,7 @@ class PhotoDetailFragment : Fragment() {
             try {
                 val existing = db.favoritePhotoDao().getById(photoId)
                 if (existing != null) {
-                    Toast.makeText(requireContext(), "Already in favorites", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), R.string.already_in_favorites, Toast.LENGTH_SHORT).show()
                     return@launch
                 }
 

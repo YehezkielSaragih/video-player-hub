@@ -1,23 +1,41 @@
 <resources>
-        <string name="app_name">PicSumGalery</string>
+
+        <!-- App -->
+        <string name="app_name">PicsumGalery</string>
+
+        <!-- Login Page -->
         <string name="hint_email">eve.holt@reqres.in</string>
         <string name="hint_password">cityslicka</string>
         <string name="btn_login">Login</string>
+
+        <!-- Login Errors -->
+        <string name="login_email_required">Email must not be empty</string>
+        <string name="login_password_required">Password must not be empty</string>
+        <string name="login_credentials_required">Email and password must not be empty</string>
+        <string name="login_failed">Login failed</string>
+        <string name="login_failed_wrong">Wrong email or password</string>
+        <string name="login_failed_empty_token">Login failed: empty token</string>
+        <string name="login_success">Login successful</string>
         <string name="login_error_empty">Email and password must not be empty</string>
         <string name="login_error_failed">Login failed: %s</string>
+
+        <!-- Photo Grid -->
         <string name="btn_load_more">Load More</string>
         <string name="btn_view_favorites">Go to Favorites</string>
+        <string name="empty_state">No photos available</string>
+        <string name="photo">Photo</string>
+        <string name="author_placeholder">Author</string>
+
+        <!-- Photo Detail -->
+        <string name="author">Author: %s</string>
+        <string name="photo_size">Size: %d × %d</string>
         <string name="add_to_favorites">Add to Favorites</string>
         <string name="already_in_favorites">Already in Favorites</string>
         <string name="added_to_favorites">Added to favorites</string>
         <string name="failed_add_favorite">Failed to add favorite</string>
-        <string name="empty_state">No photos available</string>
-        <string name="photo">Photo</string>
-        <string name="author">Author: %s</string>
-        <string name="author_placeholder">Author</string>
-        <string name="photo_size">Size: %d × %d</string>
-        <string name="btn_back">Back</string>
-        <string name="btn_add_fav">Add to Favorite</string>
+
+        <!-- Favorites -->
         <string name="empty_favorites">No favorite photos yet.</string>
         <string name="img_btn_delete">Delete</string>
+
 </resources>

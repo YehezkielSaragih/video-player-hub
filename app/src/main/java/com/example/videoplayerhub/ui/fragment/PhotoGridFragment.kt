@@ -1,10 +1,9 @@
-package com.example.videoplayerhub.ui.activity
+package com.example.videoplayerhub.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +14,7 @@ import com.example.videoplayerhub.R
 import com.example.videoplayerhub.adapter.PhotoAdapter
 import com.example.videoplayerhub.config.Client
 import com.example.videoplayerhub.model.PicsumPhoto
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PhotoGridFragment : Fragment() {
@@ -92,8 +92,12 @@ class PhotoGridFragment : Fragment() {
     }
 
     private fun loadMorePhotos() {
+        isLoading = true
         currentPage++
-        loadPhotos(currentPage)
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(2000)
+            loadPhotos(currentPage)
+        }
     }
 
     private fun loadPhotos(page: Int) {

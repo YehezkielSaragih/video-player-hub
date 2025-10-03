@@ -32,7 +32,7 @@ class LoginActivity : ComponentActivity() {
             val password = etPassword.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Email and password must not be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.login_credentials_required, Toast.LENGTH_SHORT).show()
             } else {
                 loginUser(email, password)
             }
@@ -53,11 +53,11 @@ class LoginActivity : ComponentActivity() {
                     startActivity(intent)
                     finish()
                 } else {
-                    Toast.makeText(this@LoginActivity, "Login failed: empty token", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, R.string.login_failed_empty_token, Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(this@LoginActivity, "Login failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@LoginActivity, R.string.login_failed, Toast.LENGTH_SHORT).show()
             }
         }
     }

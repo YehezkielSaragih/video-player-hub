@@ -54,6 +54,6 @@
             android:id="@+id/btnAddFav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/btn_add_fav"/>
+            android:text="@string/add_to_favorites"/>
     </LinearLayout>
 </LinearLayout>

@@ -1,7 +1,11 @@
-package com.example.videoplayerhub.ui.activity
+package com.example.videoplayerhub.ui.fragment
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -10,13 +14,9 @@ import com.example.videoplayerhub.R
 import com.example.videoplayerhub.adapter.FavoriteAdapter
 import com.example.videoplayerhub.config.AppDatabase
 import com.example.videoplayerhub.model.FavoritePhoto
+import com.example.videoplayerhub.ui.fragment.PhotoDetailFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 
 class FavoriteFragment : Fragment() {
 
