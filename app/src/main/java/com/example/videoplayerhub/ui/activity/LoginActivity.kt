@@ -6,18 +6,19 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.example.videoplayerhub.R
-import com.example.videoplayerhub.config.Client
 import com.example.videoplayerhub.config.Prefs
-import com.example.videoplayerhub.dto.LoginRequest
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import com.example.videoplayerhub.viewmodel.LoginViewModel
+import androidx.lifecycle.Observer
 
 class LoginActivity : ComponentActivity() {
 
     private lateinit var etEmail: EditText
     private lateinit var etPassword: EditText
     private lateinit var btnLogin: Button
+
+    private val loginViewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +28,19 @@ class LoginActivity : ComponentActivity() {
         etPassword = findViewById(R.id.etPassword)
         btnLogin = findViewById(R.id.btnLogin)
 
+        // Observer login state
+        loginViewModel.loginState.observe(this, Observer { result ->
+            result.onSuccess { token ->
+                Prefs.saveToken(this, token)
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+            result.onFailure {
+                Toast.makeText(this, R.string.login_failed, Toast.LENGTH_SHORT).show()
+            }
+        })
+
         btnLogin.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
@@ -34,30 +48,7 @@ class LoginActivity : ComponentActivity() {
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, R.string.login_credentials_required, Toast.LENGTH_SHORT).show()
             } else {
-                loginUser(email, password)
-            }
-        }
-    }
-
-    private fun loginUser(email: String, password: String) {
-        lifecycleScope.launch {
-            try {
-                val response = Client.authApi.login(LoginRequest(email, password))
-
-                if (response.token.isNotEmpty()) {
-                    // Save token locally
-                    Prefs.saveToken(this@LoginActivity, response.token)
-
-                    // Navigate to PhotoGridActivity
-                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                } else {
-                    Toast.makeText(this@LoginActivity, R.string.login_failed_empty_token, Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Toast.makeText(this@LoginActivity, R.string.login_failed, Toast.LENGTH_SHORT).show()
+                loginViewModel.login(email, password)
             }
         }
     }
