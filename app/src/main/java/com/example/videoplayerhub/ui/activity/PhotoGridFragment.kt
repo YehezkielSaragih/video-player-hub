@@ -1,11 +1,12 @@
 package com.example.videoplayerhub.ui.activity
 
-import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.activity.ComponentActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,45 +17,53 @@ import com.example.videoplayerhub.config.Client
 import com.example.videoplayerhub.model.PicsumPhoto
 import kotlinx.coroutines.launch
 
-class PhotoGridActivity : ComponentActivity() {
+class PhotoGridFragment : Fragment() {
 
     private lateinit var rvPhotos: RecyclerView
     private lateinit var swipeRefresh: SwipeRefreshLayout
-    private lateinit var btnViewFavorites: Button
     private lateinit var tvEmptyState: TextView
     private lateinit var adapter: PhotoAdapter
 
     private val photos = mutableListOf<PicsumPhoto>()
     private var currentPage = 1
     private val limit = 30
-    private var isLoading = false   // Flag untuk mencegah load ganda
+    private var isLoading = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_photogrid)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_photogrid, container, false)
+    }
 
-        rvPhotos = findViewById(R.id.rvPhotos)
-        swipeRefresh = findViewById(R.id.swipeRefresh)
-        btnViewFavorites = findViewById(R.id.btnViewFavorites)
-        tvEmptyState = findViewById(R.id.tvEmptyState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        rvPhotos = view.findViewById(R.id.rvPhotos)
+        swipeRefresh = view.findViewById(R.id.swipeRefresh)
+        tvEmptyState = view.findViewById(R.id.tvEmptyState)
 
         adapter = PhotoAdapter(photos) { photo ->
-            val intent = Intent(this, PhotoDetailActivity::class.java)
-            intent.putExtra("PHOTO_ID", photo.id)
-            intent.putExtra("PHOTO_AUTHOR", photo.author)
-            intent.putExtra("PHOTO_WIDTH", photo.width)
-            intent.putExtra("PHOTO_HEIGHT", photo.height)
-            intent.putExtra("PHOTO_DOWNLOAD_URL", photo.downloadUrl)
-            startActivity(intent)
+            val fragment = PhotoDetailFragment().apply {
+                arguments = Bundle().apply {
+                    putString("PHOTO_ID", photo.id)
+                    putString("PHOTO_AUTHOR", photo.author)
+                    putInt("PHOTO_WIDTH", photo.width)
+                    putInt("PHOTO_HEIGHT", photo.height)
+                    putString("PHOTO_DOWNLOAD_URL", photo.downloadUrl)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null)
+                .commit()
         }
 
-        rvPhotos.layoutManager = GridLayoutManager(this, 3)
+        rvPhotos.layoutManager = GridLayoutManager(requireContext(), 3)
         rvPhotos.adapter = adapter
 
         swipeRefresh.setOnRefreshListener { refreshPhotos() }
-        btnViewFavorites.setOnClickListener {
-            startActivity(Intent(this, FavoriteActivity::class.java))
-        }
 
         // Infinite scroll listener
         rvPhotos.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -92,7 +101,7 @@ class PhotoGridActivity : ComponentActivity() {
         swipeRefresh.isRefreshing = true
         tvEmptyState.visibility = View.GONE
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val newPhotos = Client.appApi.getList(page, limit)
                 swipeRefresh.isRefreshing = false

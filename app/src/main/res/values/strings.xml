@@ -1,5 +1,5 @@
 <resources>
-        <string name="app_name">VideoPlayerHub</string>
+        <string name="app_name">PicSumGalery</string>
         <string name="hint_email">eve.holt@reqres.in</string>
         <string name="hint_password">cityslicka</string>
         <string name="btn_login">Login</string>
@@ -7,6 +7,10 @@
         <string name="login_error_failed">Login failed: %s</string>
         <string name="btn_load_more">Load More</string>
         <string name="btn_view_favorites">Go to Favorites</string>
+        <string name="add_to_favorites">Add to Favorites</string>
+        <string name="already_in_favorites">Already in Favorites</string>
+        <string name="added_to_favorites">Added to favorites</string>
+        <string name="failed_add_favorite">Failed to add favorite</string>
         <string name="empty_state">No photos available</string>
         <string name="photo">Photo</string>
         <string name="author">Author: %s</string>

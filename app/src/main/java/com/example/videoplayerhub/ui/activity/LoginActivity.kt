@@ -49,7 +49,7 @@ class LoginActivity : ComponentActivity() {
                     Prefs.saveToken(this@LoginActivity, response.token)
 
                     // Navigate to PhotoGridActivity
-                    val intent = Intent(this@LoginActivity, PhotoGridActivity::class.java)
+                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {

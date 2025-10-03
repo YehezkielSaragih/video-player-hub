@@ -21,7 +21,7 @@ abstract class AppDatabase : RoomDatabase() {
                 INSTANCE ?: Room.databaseBuilder(
                     ctx.applicationContext,
                     AppDatabase::class.java,
-                    "video-player-hub.db"
+                    "videoplayerhub.db"
                 )
                     // DEMO: izinkan query di main thread.
                     // Produksi sebaiknya pakai coroutine atau RxJava.

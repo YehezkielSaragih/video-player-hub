@@ -26,17 +26,7 @@
         </activity>
 
         <activity
-            android:name=".ui.activity.PhotoGridActivity"
-            android:exported="true"
-            android:theme="@style/Theme.VideoPlayerHub" />
-
-        <activity
-            android:name=".ui.activity.PhotoDetailActivity"
-            android:exported="true"
-            android:theme="@style/Theme.VideoPlayerHub" />
-
-        <activity
-            android:name=".ui.activity.FavoriteActivity"
+            android:name=".ui.activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.VideoPlayerHub" />
 

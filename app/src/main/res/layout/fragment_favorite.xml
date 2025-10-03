@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- RecyclerView untuk daftar favorite -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFavorites"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_favorite"
+        tools:itemCount="3" />
+
+    <!-- Empty state -->
+    <TextView
+        android:id="@+id/tvEmptyFav"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/empty_favorites"
+        android:textAlignment="center"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:padding="16dp"/>
+</FrameLayout>
