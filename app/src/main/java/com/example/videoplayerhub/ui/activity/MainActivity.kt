@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.videoplayerhub.R
+import com.example.videoplayerhub.config.Prefs
 import com.example.videoplayerhub.ui.fragment.FavoriteFragment
 import com.example.videoplayerhub.ui.fragment.PhotoGridFragment
 import com.google.android.material.appbar.MaterialToolbar
@@ -81,6 +82,7 @@ class MainActivity : AppCompatActivity() {
 
         builder.setPositiveButton("Yes") { dialog, _ ->
             // Aksi logout
+            Prefs.clearToken(this)
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
