@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="24dp"
-    android:gravity="center">
+    android:gravity="center"
+    android:background="@drawable/bg"> <!-- Tambahkan ini -->
 
     <!-- Login Title -->
     <TextView
@@ -15,7 +16,8 @@
         android:text="@string/app_name"
         android:textSize="28sp"
         android:textStyle="bold"
-        android:layout_marginBottom="32dp"/>
+        android:layout_marginBottom="32dp"
+        android:textColor="@android:color/white"/> <!-- supaya kontras -->
 
     <!-- Email -->
     <EditText
