@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.videoplayerhub.R
 import com.example.videoplayerhub.adapter.PhotoAdapter
+import com.example.videoplayerhub.config.Prefs
 import com.example.videoplayerhub.model.PicsumPhoto
 import com.example.videoplayerhub.viewmodel.PhotoGridViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -60,9 +61,24 @@ class PhotoGridFragment : Fragment() {
         rvPhotos.layoutManager = GridLayoutManager(requireContext(), 3)
         rvPhotos.adapter = adapter
 
-        // Swipe to refresh
+        // Inisialisasi ViewModel
+        viewModel.init(requireContext())
+
+        // Swipe refresh
         swipeRefresh.setOnRefreshListener {
-            viewModel.refreshPhotos()
+            viewModel.refreshPhotos(requireContext())
+        }
+
+        // Restore last loaded items
+        val lastCount = Prefs.getLastItemCount(requireContext())
+        if (lastCount > 0) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.photos.collectLatest { list ->
+                    photoList.clear()
+                    photoList.addAll(list.take(lastCount))
+                    adapter.notifyDataSetChanged()
+                }
+            }
         }
 
         // Observe photos
@@ -70,12 +86,10 @@ class PhotoGridFragment : Fragment() {
             viewModel.photos.collectLatest { list ->
                 val startPos = photoList.size
                 if (viewModel.isLoading.value && startPos > 0) {
-                    // Append new items
                     val newItems = list.takeLast(list.size - startPos)
                     photoList.addAll(newItems)
                     adapter.notifyItemRangeInserted(startPos, newItems.size)
                 } else {
-                    // Refresh
                     photoList.clear()
                     photoList.addAll(list)
                     adapter.notifyDataSetChanged()
@@ -85,7 +99,7 @@ class PhotoGridFragment : Fragment() {
             }
         }
 
-        // Observe loading state
+        // Observe loading
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isLoading.collectLatest { loading ->
                 swipeRefresh.isRefreshing = loading
@@ -104,12 +118,12 @@ class PhotoGridFragment : Fragment() {
                     (visibleItemCount + firstVisibleItemPosition) >= totalItemCount &&
                     firstVisibleItemPosition >= 0
                 ) {
-                    viewModel.loadMorePhotos()
+                    viewModel.loadMorePhotos(requireContext())
                 }
             }
         })
 
         // Initial load
-        viewModel.refreshPhotos()
+        viewModel.refreshPhotos(requireContext())
     }
 }
