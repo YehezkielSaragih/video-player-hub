@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +16,7 @@ import com.example.videoplayerhub.config.AppDatabase
 import com.example.videoplayerhub.model.FavoritePhoto
 import com.example.videoplayerhub.viewmodel.FavoriteViewModel
 import androidx.fragment.app.viewModels
+import androidx.appcompat.app.AlertDialog
 
 class FavoriteFragment : Fragment() {
 
@@ -49,7 +51,20 @@ class FavoriteFragment : Fragment() {
 
         adapter = FavoriteAdapter(
             mutableListOf(),
-            onRemove = { fav -> favoriteViewModel.removeFavorite(fav) },
+            onRemove = { fav ->
+                // tampilkan popup konfirmasi sebelum hapus
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Delete Favorite")
+                    .setMessage("Are you sure you want to remove this photo from your favorites list?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        favoriteViewModel.removeFavorite(fav) // hapus dari DB
+                        Toast.makeText(requireContext(), "Photo successfully removed from favorites", Toast.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton("No") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+            },
             onItemClick = { fav -> openDetail(fav) }
         )
 

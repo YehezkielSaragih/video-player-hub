@@ -24,24 +24,30 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
+        // default fragment pertama (Home)
         if (savedInstanceState == null) {
-            replaceFragment(PhotoGridFragment())
+            toolbar.title = getString(R.string.title_home)
+            replaceFragment(PhotoGridFragment(), "HOME")
         }
 
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navHome -> {
-                    replaceFragment(PhotoGridFragment())
+                    toolbar.title = getString(R.string.title_home)
+                    replaceFragment(PhotoGridFragment(), "HOME")
                     true
                 }
                 R.id.navFavorite -> {
-                    replaceFragment(FavoriteFragment())
+                    toolbar.title = getString(R.string.title_favorite)
+                    replaceFragment(FavoriteFragment(), "FAVORITE")
                     true
                 }
                 R.id.navLogout -> {
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
-                    finish()
+//                    val intent = Intent(this, LoginActivity::class.java)
+//                    startActivity(intent)
+//                    finish()
+//                    true
+                    showLogoutDialog()
                     true
                 }
                 else -> false
@@ -49,9 +55,43 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun replaceFragment(fragment: Fragment) {
+    private fun replaceFragment(fragment: Fragment, tag: String) {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+
+        // Jika fragment tujuan sama dengan yang sedang tampil → jangan replace
+        if (currentFragment != null && currentFragment::class == fragment::class) {
+            return
+        }
+
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment)
+            .setCustomAnimations(
+                R.anim.slide_in_right,
+                R.anim.slide_out_left,
+                R.anim.slide_in_left,
+                R.anim.slide_out_right
+            )
+            .replace(R.id.fragmentContainer, fragment, tag)
             .commit()
     }
+
+    private fun showLogoutDialog() {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.title_logout))
+        builder.setMessage("Are you sure you want to logout?")
+
+        builder.setPositiveButton("Yes") { dialog, _ ->
+            // Aksi logout
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.show()
+    }
+
 }

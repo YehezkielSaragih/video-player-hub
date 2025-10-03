@@ -30,7 +30,7 @@
             android:layout_alignParentEnd="true"
             android:layout_margin="8dp"
             android:background="@android:color/transparent"
-            android:src="@android:drawable/ic_delete"
+            android:src="@drawable/ic_favorite"
             android:contentDescription="@string/img_btn_delete"
             app:tint="@android:color/holo_red_dark" />
 

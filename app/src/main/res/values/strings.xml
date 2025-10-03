@@ -3,6 +3,11 @@
         <!-- App -->
         <string name="app_name">PicsumGalery</string>
 
+        <!-- Toolbar Titles -->
+        <string name="title_home">Home</string>
+        <string name="title_favorite">Favorite</string>
+        <string name="title_logout">Logout</string>
+
         <!-- Login Page -->
         <string name="hint_email">eve.holt@reqres.in</string>
         <string name="hint_password">cityslicka</string>
@@ -37,5 +42,11 @@
         <!-- Favorites -->
         <string name="empty_favorites">No favorite photos yet.</string>
         <string name="img_btn_delete">Delete</string>
+
+        <!-- Dialog -->
+        <string name="logout_confirm">Are you sure you want to logout?</string>
+        <string name="yes">Yes</string>
+        <string name="cancel">Cancel</string>
+
 
 </resources>

@@ -28,7 +28,7 @@ class PhotoGridViewModel : ViewModel() {
     fun loadMorePhotos() {
         if (_isLoading.value) return
         currentPage++
-        loadPhotos(refresh = false, delayMillis = 2000)
+        loadPhotos(refresh = false, delayMillis = 1000)
     }
 
     private fun loadPhotos(refresh: Boolean = false, delayMillis: Long) {
