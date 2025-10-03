@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
@@ -14,9 +13,8 @@ import com.example.videoplayerhub.R
 import com.example.videoplayerhub.adapter.FavoriteAdapter
 import com.example.videoplayerhub.config.AppDatabase
 import com.example.videoplayerhub.model.FavoritePhoto
-import com.example.videoplayerhub.ui.fragment.PhotoDetailFragment
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import com.example.videoplayerhub.viewmodel.FavoriteViewModel
+import androidx.fragment.app.viewModels
 
 class FavoriteFragment : Fragment() {
 
@@ -25,12 +23,13 @@ class FavoriteFragment : Fragment() {
     private lateinit var adapter: FavoriteAdapter
     private lateinit var db: AppDatabase
 
+    private val favoriteViewModel: FavoriteViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate layout khusus untuk FavoriteFragment
         return inflater.inflate(R.layout.fragment_favorite, container, false)
     }
 
@@ -40,41 +39,31 @@ class FavoriteFragment : Fragment() {
         rvFavorites = view.findViewById(R.id.rvFavorites)
         tvEmptyFav = view.findViewById(R.id.tvEmptyFav)
 
+        // inisialisasi database
+        db = Room.databaseBuilder(
+            requireContext().applicationContext,
+            AppDatabase::class.java,
+            "videoplayerhub_db"
+        ).build()
+        favoriteViewModel.init(db)
+
         adapter = FavoriteAdapter(
             mutableListOf(),
-            onRemove = { fav -> removeFromFavorites(fav) },
+            onRemove = { fav -> favoriteViewModel.removeFavorite(fav) },
             onItemClick = { fav -> openDetail(fav) }
         )
 
         rvFavorites.layoutManager = LinearLayoutManager(requireContext())
         rvFavorites.adapter = adapter
 
-        db = Room.databaseBuilder(
-            requireContext().applicationContext,
-            AppDatabase::class.java,
-            "videoplayerhub_db"
-        ).build()
-
-        loadFavoritesFromDb()
-    }
-
-    private fun loadFavoritesFromDb() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            db.favoritePhotoDao().getAllFavoritesFlow().collectLatest { list ->
-                adapter.setData(list)
-                showEmptyState(list.isEmpty())
-            }
-        }
-    }
-
-    private fun removeFromFavorites(fav: FavoritePhoto) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            db.favoritePhotoDao().delete(fav)
+        // observe data dari ViewModel
+        favoriteViewModel.favorites.observe(viewLifecycleOwner) { list ->
+            adapter.setData(list)
+            showEmptyState(list.isEmpty())
         }
     }
 
     private fun openDetail(fav: FavoritePhoto) {
-        // Panggil PhotoDetailFragment, bukan Activity lagi
         val fragment = PhotoDetailFragment().apply {
             arguments = Bundle().apply {
                 putString("PHOTO_ID", fav.id)
